@@ -1,0 +1,87 @@
+--Database creation
+CREATE DATABASE jauntyCoffee;
+
+
+--table creation
+CREATE TABLE coffee_shop(
+shop_id INT PRIMARY KEY,
+shop_name VARCHAR(50),
+city VARCHAR(50),
+state CHAR(2)
+);
+
+CREATE TABLE employee(
+employee_id INT PRIMARY KEY AUTO_INCREMENT,
+first_name VARCHAR(30),
+last_name VARCHAR(30),
+hire_date DATE,
+job_title VARCHAR(30),
+shop_id INT,
+FOREIGN KEY (shop_id)
+REFERENCES coffee_shop(shop_id)
+);
+
+CREATE TABLE supplier(
+supplier_id INT PRIMARY KEY,
+company_name VARCHAR(50),
+country VARCHAR(30),
+sales_contact_name VARCHAR(60),
+email VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE coffee(
+coffee_id INT PRIMARY KEY,
+shop_id INT,
+supplier_id INT,
+coffee_name VARCHAR(30),
+price_per_pound NUMERIC(5,2),
+FOREIGN KEY (shop_id) REFERENCES coffee_shop(shop_id),
+FOREIGN KEY (supplier_id) REFERENCES supplier(supplier_id)
+);
+
+
+--inserting values into tables
+INSERT INTO coffee_shop(shop_id, shop_name, city, state)
+VALUES (777, "Crazy Coffee", "Manhattan", "NY"),
+ (778, "Cacao Coffee", "Phoenix", "AZ"),
+ (779, "Beach Bum Java", "San Diego", "CA");
+
+INSERT INTO supplier(supplier_id, company_name, country, sales_contact_name, email)
+VALUES (24, "All Beans All Day", "Mexico", "Joe Java", "John@allbeansallday.com"),
+ (83, "Beans Depot", "Cuba", "Dean Fuller", "Dean@beansdepot.com"),
+ (65, "Beans and Beans", "Italy", "Jamie Flower", "Jamie@beansandbeans.com");
+ 
+INSERT INTO employee(first_name, last_name, hire_date, job_title, shop_id)
+VALUES ("John", "Smith", "2001-07-15", "Manager", 777),
+ ("Jane", "Brown", "2009-12-30", "Barista", 778),
+ ("Julie", "Andrews", "2010-06-24", "Barista", 779);
+
+INSERT INTO coffee(coffee_id, shop_id, supplier_id, coffee_name, price_per_pound)
+VALUES (2428, 778, 24, "Organic Special", 52.99),
+ (2689, 777, 83, "Brown Bean Blend", 32.99),
+ (2894, 779, 65, "Java Love Blend", 47.99);
+ 
+ 
+-creation of table views to see data 
+CREATE VIEW EmployeeView AS
+SELECT employee_id, CONCAT(first_name," ", last_name) "employee_full_name", hire_date,
+job_title, shop_id
+FROM employee;
+
+
+
+CREATE INDEX coffee_name_index
+ON coffee(coffee_name);
+
+
+--selecting data from tables by criteria
+SELECT first_name, last_name, hire_date
+FROM employee
+WHERE hire_date > "2000-01-01";
+
+SELECT coffee_shop.shop_name, coffee.coffee_name, coffee.price_per_pound, supplier.supplier_id
+FROM coffee_shop, coffee, supplier
+FULL JOIN supplier
+LIMIT 5;
+
+
